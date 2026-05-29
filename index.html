@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SafeScan AI - Powered by Unrugpad</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060a0f;--bg2:#0c1118;--bg3:#111820;--panel:#141c26;
+  --border:#1e2d3d;--accent:#00e5ff;--safe:#39ff14;--warn:#ffa502;--danger:#ff4757;
+  --text:#e8f4f8;--text2:#7a9bb5;--text3:#3d5a73;
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;--fb:'DM Sans',sans-serif;
+  --nav-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;overflow-x:hidden;padding-bottom:var(--nav-h)}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* HEADER */
+header{border-bottom:1px solid var(--border);background:rgba(6,10,15,0.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.hinner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:700px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:800;font-size:17px;letter-spacing:-0.5px}
+.logo-icon{width:30px;height:30px;border:2px solid var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(0,229,255,0.08);animation:glow 2.5s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(0,229,255,0.3)}50%{box-shadow:0 0 20px rgba(0,229,255,0.7)}}
+.logo span{color:var(--accent)}
+.hbadges{display:flex;gap:5px}
+.badge{font-family:var(--fm);font-size:9px;padding:3px 6px;border-radius:4px;border:1px solid;letter-spacing:0.5px}
+.bs{color:#00e5ff;border-color:rgba(0,229,255,0.3);background:rgba(0,229,255,0.06)}
+.bw{color:#39ff14;border-color:rgba(57,255,20,0.3);background:rgba(57,255,20,0.06)}
+.bn{color:#ffa502;border-color:rgba(255,165,2,0.3);background:rgba(255,165,2,0.06)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(6,10,15,0.97);border-top:1px solid var(--border);backdrop-filter:blur(12px);display:flex;z-index:100}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all 0.2s;border:none;background:transparent;color:var(--text3)}
+.bnav-item.active{color:var(--accent)}
+.bnav-item svg{width:22px;height:22px}
+.bnav-label{font-family:var(--fm);font-size:9px;letter-spacing:0.5px;text-transform:uppercase}
+.bnav-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);display:none}
+.bnav-item.active .bnav-dot{display:block}
+
+/* PAGES */
+.page{display:none;max-width:700px;margin:0 auto;padding:0 16px}
+.page.active{display:block}
+
+/* WRAP */
+.wrap{max-width:700px;margin:0 auto;padding:0 16px}
+
+/* DASHBOARD */
+.dash-hero{padding:24px 0 16px;text-align:center}
+.dash-greeting{font-family:var(--fm);font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.dash-name{font-family:var(--fh);font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.dash-sub{font-size:12px;color:var(--text2)}
+.hpowered{font-family:var(--fh);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px}
+.hpowered span{color:var(--accent);font-weight:800;font-size:13px}
+
+/* PROFILE CHIPS */
+.profile-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.pchip{padding:4px 10px;border-radius:16px;font-family:var(--fm);font-size:10px;border:1px solid;letter-spacing:0.3px}
+.pc-allergy{color:var(--danger);border-color:rgba(255,71,87,0.3);background:rgba(255,71,87,0.06)}
+.pc-condition{color:var(--warn);border-color:rgba(255,165,2,0.3);background:rgba(255,165,2,0.06)}
+.pc-med{color:var(--accent);border-color:rgba(0,229,255,0.25);background:rgba(0,229,255,0.05)}
+.pc-empty{color:var(--text3);border-color:var(--border);background:rgba(255,255,255,0.02)}
+
+/* SCAN BUTTON BIG */
+.big-scan-btn{width:100%;background:linear-gradient(135deg,var(--accent),#0099cc);border:none;border-radius:14px;padding:20px;cursor:pointer;text-align:center;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.big-scan-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,229,255,0.3)}
+.big-scan-btn:active{transform:translateY(0)}
+.bsb-icon{font-size:28px}
+.bsb-text{text-align:left}
+.bsb-title{font-family:var(--fh);font-size:18px;font-weight:800;color:#000;letter-spacing:-0.5px}
+.bsb-sub{font-size:11px;color:rgba(0,0,0,0.6);margin-top:2px;font-family:var(--fm)}
+
+/* STATS CARDS */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+.sc-label{font-family:var(--fm);font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:6px}
+.sc-val{font-family:var(--fh);font-size:24px;font-weight:800;letter-spacing:-1px}
+.sc-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* HISTORY */
+.section-title{font-family:var(--fh);font-size:16px;font-weight:700;letter-spacing:-0.3px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.section-title span{font-family:var(--fm);font-size:10px;color:var(--danger);cursor:pointer;font-weight:400}
+.hist-item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;display:flex;gap:12px;align-items:flex-start}
+.hist-item:hover{border-color:rgba(0,229,255,0.3)}
+.hist-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.hi-low{background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.2)}
+.hi-med{background:rgba(255,165,2,0.1);border:1px solid rgba(255,165,2,0.2)}
+.hi-high{background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.2)}
+.hist-info{flex:1}
+.hi-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.hi-meta{font-family:var(--fm);font-size:10px;color:var(--text3)}
+.hi-flags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.hi-flag{font-family:var(--fm);font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid}
+.hist-level{font-family:var(--fm);font-size:10px;flex-shrink:0;padding:3px 8px;border-radius:4px}
+.hl-low{color:var(--safe);border:1px solid rgba(57,255,20,0.3);background:rgba(57,255,20,0.06)}
+.hl-med{color:var(--warn);border:1px solid rgba(255,165,2,0.3);background:rgba(255,165,2,0.06)}
+.hl-high{color:var(--danger);border:1px solid rgba(255,71,87,0.3);background:rgba(255,71,87,0.06)}
+
+/* SCANNER PAGE */
+.scan-hero{padding:20px 0 16px;text-align:center}
+.scan-title{font-family:var(--fh);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.scan-sub{font-size:12px;color:var(--text2)}
+.legal-notice{background:rgba(255,165,2,0.06);border:1px solid rgba(255,165,2,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start}
+.ln-icon{font-size:16px;flex-shrink:0}
+.ln-text{font-size:10px;color:var(--text2);line-height:1.6;font-family:var(--fm)}
+.ln-text strong{color:var(--warn)}
+
+/* MODE TABS */
+.mtabs{display:flex;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:14px;flex-wrap:wrap}
+.mtab{flex:1;min-width:80px;padding:8px 6px;border-radius:7px;border:none;background:transparent;color:var(--text2);font-family:var(--fb);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:4px}
+.mtab.active{background:var(--bg3);color:var(--accent);border:1px solid var(--border)}
+
+/* SCANNER CARD */
+.scard{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.cam-zone{padding:16px}
+.cam-btn{width:100%;background:linear-gradient(135deg,rgba(0,229,255,0.1),rgba(0,229,255,0.03));border:2px dashed rgba(0,229,255,0.4);border-radius:12px;padding:22px 14px;cursor:pointer;text-align:center;transition:all 0.2s;display:block;color:var(--accent)}
+.cam-btn:hover{border-color:rgba(0,229,255,0.8);background:linear-gradient(135deg,rgba(0,229,255,0.18),rgba(0,229,255,0.07))}
+.cam-icon{font-size:38px;margin-bottom:6px}
+.cam-title{font-family:var(--fh);font-size:16px;font-weight:800}
+.cam-sub{font-size:11px;color:var(--text2);margin-top:3px;font-family:var(--fm)}
+.cam-pill{margin-top:10px;display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:#000;padding:6px 16px;border-radius:20px;font-family:var(--fh);font-weight:800;font-size:11px}
+.or-div{display:flex;align-items:center;gap:8px;margin:10px 0 8px}
+.or-div div{flex:1;height:1px;background:var(--border)}
+.or-div span{font-family:var(--fm);font-size:9px;color:var(--text3)}
+.opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.opt-btn{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;padding:10px 5px;cursor:pointer;text-align:center;transition:all 0.2s}
+.opt-btn:hover{border-color:rgba(0,229,255,0.4)}
+.opt-btn.green{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.04)}
+.opt-emoji{font-size:18px;margin-bottom:3px}
+.opt-title{font-family:var(--fh);font-size:10px;font-weight:700;color:var(--text)}
+.opt-title.g{color:var(--safe)}
+.opt-sub{font-size:9px;color:var(--text3);font-family:var(--fm)}
+.img-prev{display:none;margin-top:10px;position:relative}
+.img-prev img{width:100%;max-height:160px;object-fit:cover;border-radius:9px;border:1px solid rgba(0,229,255,0.3)}
+.img-label{position:absolute;top:7px;left:7px;background:rgba(0,229,255,0.9);color:#000;font-family:var(--fm);font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px}
+.img-close{position:absolute;top:7px;right:7px;background:rgba(255,71,87,0.9);border:none;border-radius:50%;width:24px;height:24px;color:white;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.expand-box{display:none;padding:12px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,0.2)}
+.expand-box.bc{border-left:3px solid var(--safe)}
+.expand-box.mn{border-left:3px solid var(--accent)}
+.elabel{font-family:var(--fm);font-size:10px;letter-spacing:1px;margin-bottom:7px}
+.elabel.g{color:var(--safe)}
+.elabel.b{color:var(--accent)}
+.einput{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:var(--fm);font-size:12px;outline:none;transition:border-color 0.2s}
+.einput:focus{border-color:rgba(0,229,255,0.4)}
+textarea.einput{resize:vertical;min-height:75px;line-height:1.6}
+.sactions{padding:12px 16px;background:var(--bg2);border-top:1px solid var(--border)}
+.checks{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.chk{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);cursor:pointer}
+.chk input{accent-color:var(--accent);width:12px;height:12px}
+.sbtn{width:100%;background:var(--accent);color:#000;border:none;padding:13px;border-radius:9px;font-family:var(--fh);font-weight:800;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:7px;text-transform:uppercase}
+.sbtn:hover{background:#33ecff;box-shadow:0 0 20px rgba(0,229,255,0.4)}
+.sbtn:disabled{opacity:0.4;cursor:not-allowed}
+.expills{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0;justify-content:center}
+.epill{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:4px 10px;font-size:10px;color:var(--text2);cursor:pointer;font-family:var(--fm)}
+.epill:hover{border-color:var(--accent);color:var(--accent)}
+
+/* LOADING */
+.loading{padding:40px 20px;text-align:center;display:none}
+.loading.show{display:block}
+.sring{width:60px;height:60px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltxt{font-family:var(--fm);font-size:11px;color:var(--accent);letter-spacing:1px}
+.lsteps{margin-top:14px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.lstep{font-family:var(--fm);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;transition:color 0.3s}
+.lstep.done{color:var(--safe)}
+.lstep.active{color:var(--accent)}
+.sdot{width:4px;height:4px;border-radius:50%;background:currentColor}
+
+/* RESULTS */
+#results{display:none;margin-top:8px}
+#results.show{display:block}
+.report-header{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px}
+.rh-product{font-family:var(--fh);font-size:19px;font-weight:800;letter-spacing:-0.5px;line-height:1.1;margin-bottom:3px}
+.rh-category{font-family:var(--fm);font-size:9px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.rh-row{display:flex;gap:10px;align-items:flex-start}
+.rh-left{flex:1}
+.rh-badge{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);border-radius:8px;padding:8px 12px;text-align:center;flex-shrink:0}
+.rh-badge-label{font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:1px;margin-bottom:3px}
+.rh-badge-val{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--accent)}
+.cm-label{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:5px;display:flex;justify-content:space-between}
+.cm-track{height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
+.cm-segments{display:flex;gap:2px;height:100%}
+.cm-seg{flex:1;border-radius:2px;opacity:0.25;transition:opacity 0.5s}
+.cm-seg.active{opacity:1}
+.seg-low{background:var(--safe)}
+.seg-med{background:var(--warn)}
+.seg-high{background:var(--danger)}
+.flags-strip{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.flag-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:5px;font-family:var(--fm);font-size:9px;border:1px solid}
+.fc-info{color:var(--accent);border-color:rgba(0,229,255,0.25);background:rgba(0,229,255,0.05)}
+.fc-warn{color:var(--warn);border-color:rgba(255,165,2,0.3);background:rgba(255,165,2,0.06)}
+.fc-alert{color:var(--danger);border-color:rgba(255,71,87,0.3);background:rgba(255,71,87,0.06)}
+.fc-safe{color:var(--safe);border-color:rgba(57,255,20,0.25);background:rgba(57,255,20,0.04)}
+
+/* PERSONAL VERDICT — BIG BANNER */
+.pverdict{border-radius:14px;padding:20px;margin-bottom:12px;border:2px solid;position:relative;overflow:hidden;text-align:center}
+.pverdict::before{content:'';position:absolute;inset:0;opacity:0.08;background:radial-gradient(ellipse at 50% 0%,currentColor 0%,transparent 70%)}
+.pv-good{border-color:rgba(57,255,20,0.4);background:rgba(57,255,20,0.05);color:var(--safe)}
+.pv-caution{border-color:rgba(255,165,2,0.4);background:rgba(255,165,2,0.05);color:var(--warn)}
+.pv-avoid{border-color:rgba(255,71,87,0.4);background:rgba(255,71,87,0.05);color:var(--danger)}
+.pv-icon{font-size:44px;margin-bottom:8px;line-height:1}
+.pv-verdict{font-family:var(--fh);font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:6px}
+.pv-for{font-family:var(--fm);font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.pv-reason{font-size:13px;color:var(--text2);line-height:1.6;position:relative}
+.pv-noprofile{background:rgba(0,229,255,0.05);border:1px dashed rgba(0,229,255,0.3);border-radius:12px;padding:16px;margin-bottom:12px;text-align:center}
+.pv-noprofile-title{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.pv-noprofile-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.pv-setup-btn{background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-family:var(--fh);font-weight:700;font-size:13px;cursor:pointer}
+
+/* PERSONAL ALERT BOX */
+.personal-alert{background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.25);border-radius:12px;padding:14px;margin-bottom:12px}
+.pa-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pa-icon{font-size:20px}
+.pa-title{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--accent)}
+.pa-name{font-size:11px;color:var(--text3);font-family:var(--fm)}
+.pa-items{display:flex;flex-direction:column;gap:7px}
+.pa-item{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.5;border:1px solid}
+.pai-allergy{border-color:rgba(255,71,87,0.25);background:rgba(255,71,87,0.05);color:var(--text2)}
+.pai-drug{border-color:rgba(255,165,2,0.25);background:rgba(255,165,2,0.05);color:var(--text2)}
+.pai-condition{border-color:rgba(0,229,255,0.2);background:rgba(0,229,255,0.04);color:var(--text2)}
+.pai-clear{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.04);color:var(--text2)}
+
+/* RESULT TABS */
+.rcard{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.rtabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto}
+.rtab{padding:10px 13px;font-size:11px;font-weight:500;color:var(--text2);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;font-family:var(--fb)}
+.rtab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.rtab-c{display:none;padding:14px}
+.rtab-c.active{display:block}
+.rlabel{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.nrow{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.nrow:last-child{border-bottom:none}
+.nname{font-size:11px;color:var(--text2);flex:1}
+.nval{font-family:var(--fm);font-size:11px;color:var(--text);margin-right:8px}
+.nbar-w{width:60px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.nbar{height:100%;border-radius:2px;transition:width 0.8s ease}
+.nb-safe{background:var(--safe)}
+.nb-warn{background:var(--warn)}
+.nb-danger{background:var(--danger)}
+.nflag{margin-left:6px;font-size:8px;padding:2px 5px;border-radius:3px;font-family:var(--fm);text-transform:uppercase}
+.f-ok{background:rgba(57,255,20,0.1);color:var(--safe);border:1px solid rgba(57,255,20,0.2)}
+.f-mod{background:rgba(255,165,2,0.1);color:var(--warn);border:1px solid rgba(255,165,2,0.2)}
+.f-high{background:rgba(255,71,87,0.12);color:var(--danger);border:1px solid rgba(255,71,87,0.25)}
+.ichip{display:inline-flex;align-items:center;gap:3px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:3px 9px;font-size:10px;margin:2px}
+.ichip.concern{border-color:rgba(255,71,87,0.4);color:var(--danger);background:rgba(255,71,87,0.06)}
+.ichip.caution{border-color:rgba(255,165,2,0.4);color:var(--warn);background:rgba(255,165,2,0.06)}
+.ichip.safe{border-color:rgba(57,255,20,0.3);color:var(--safe);background:rgba(57,255,20,0.04)}
+.wrow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px}
+.wrow:last-child{border-bottom:none}
+.wdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.wtext{flex:1;color:var(--text2);line-height:1.5}
+.wtext strong{color:var(--text)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.sitem{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center}
+.semoji{font-size:20px;margin-bottom:5px}
+.slabel{font-size:10px;color:var(--text2);margin-bottom:4px}
+.stag{font-family:var(--fm);font-size:8px;padding:2px 6px;border-radius:3px;text-transform:uppercase}
+.nafdac-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.np-header{padding:10px 13px;background:rgba(255,165,2,0.06);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.np-title{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--warn)}
+.np-body{padding:12px}
+.np-reg{font-family:var(--fm);font-size:13px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.np-links{display:flex;flex-direction:column;gap:6px}
+.np-link{display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:7px;text-decoration:none;font-family:var(--fm);font-size:10px;border:1px solid;transition:all 0.2s}
+.nl-primary{color:var(--safe);border-color:rgba(57,255,20,0.3);background:rgba(57,255,20,0.05)}
+.nl-secondary{color:var(--accent);border-color:rgba(0,229,255,0.25);background:rgba(0,229,255,0.04)}
+.nl-danger{color:var(--danger);border-color:rgba(255,71,87,0.25);background:rgba(255,71,87,0.04)}
+.np-sms{background:rgba(57,255,20,0.05);border:1px solid rgba(57,255,20,0.2);border-radius:8px;padding:10px;margin-top:8px}
+
+/* PROFILE PAGE */
+.profile-page{padding:20px 0 10px}
+.pp-title{font-family:var(--fh);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.pp-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+.pform-section{margin-bottom:20px}
+.pfs-title{font-family:var(--fm);font-size:10px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.pform-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pform-full{grid-column:1/-1}
+.pfield{display:flex;flex-direction:column;gap:5px}
+.pfield label{font-family:var(--fm);font-size:10px;color:var(--text2);letter-spacing:0.5px}
+.pfield input,.pfield select,.pfield textarea{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border-color 0.2s;width:100%}
+.pfield input:focus,.pfield select:focus,.pfield textarea:focus{border-color:rgba(0,229,255,0.4)}
+.pfield textarea{resize:vertical;min-height:60px;line-height:1.5}
+.pfield select option{background:var(--bg2)}
+.save-btn{width:100%;background:var(--accent);color:#000;border:none;padding:13px;border-radius:10px;font-family:var(--fh);font-weight:800;font-size:14px;cursor:pointer;transition:all 0.2s;margin-top:4px;text-transform:uppercase}
+.save-btn:hover{background:#33ecff}
+.saved-toast{display:none;background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);border-radius:8px;padding:10px 14px;text-align:center;font-family:var(--fm);font-size:12px;color:var(--safe);margin-top:8px}
+
+/* DISC */
+.disc{margin:0 0 16px;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:9px;font-size:9px;color:var(--text3);line-height:1.8;font-family:var(--fm)}
+.ldot{width:4px;height:4px;background:var(--safe);border-radius:50%;display:inline-block;animation:lpulse 1.5s ease infinite;margin-right:4px}
+@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(57,255,20,0.5)}50%{box-shadow:0 0 0 4px rgba(57,255,20,0)}}
+
+@media(max-width:480px){.hbadges{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hinner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v3l2 2"/>
+        </svg>
+      </div>
+      Safe<span>Scan</span> AI
+    </div>
+    <div class="hbadges">
+      <span class="badge bs">SON</span>
+      <span class="badge bw">WHO</span>
+      <span class="badge bn">NAFDAC</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ DASHBOARD PAGE ═══════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="wrap">
+    <div class="dash-hero">
+      <div class="dash-greeting">Good day</div>
+      <div class="dash-name" id="dashName">SafeScan User</div>
+      <div class="dash-sub" id="dashSub">Set up your health profile for personalised analysis</div>
+      <div class="hpowered">Powered by <span>Unrugpad</span></div>
+    </div>
+
+    <div class="profile-chips" id="profileChips">
+      <span class="pchip pc-empty">No profile set — tap My Profile</span>
+    </div>
+
+    <button class="big-scan-btn" onclick="goToScanner()">
+      <span class="bsb-icon">📸</span>
+      <div class="bsb-text">
+        <div class="bsb-title">Scan a Product</div>
+        <div class="bsb-sub">Camera · Upload · Barcode · Type</div>
+      </div>
+    </button>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="sc-label">TOTAL SCANS</div>
+        <div class="sc-val" id="statScans" style="color:var(--accent)">0</div>
+        <div class="sc-sub">Products analysed</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">CONCERNS FOUND</div>
+        <div class="sc-val" id="statConcerns" style="color:var(--warn)">0</div>
+        <div class="sc-sub">Across all scans</div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      Scan History
+      <span onclick="clearHistory()">Clear All</span>
+    </div>
+    <div id="historyList">
+      <div style="text-align:center;padding:30px;color:var(--text3);font-family:var(--fm);font-size:12px">
+        No scans yet.<br>Tap Scan a Product to get started.
+      </div>
+    </div>
+
+    <div class="disc" style="margin-top:16px">
+      <span class="ldot"></span>
+      <strong>DISCLAIMER:</strong> SafeScan AI by Unrugpad provides informational analysis only — not a medical verdict. Always verify NAFDAC registration at <strong>registration.nafdac.gov.ng</strong>. Consult a healthcare professional for medical decisions.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SCANNER PAGE ═══════════ -->
+<div class="page" id="page-scanner">
+  <div class="wrap">
+    <div class="scan-hero">
+      <div class="scan-title">Analyse Product</div>
+      <div class="scan-sub">Scan label, barcode, or type product details</div>
+    </div>
+
+    <div class="legal-notice">
+      <span class="ln-icon">⚖️</span>
+      <div class="ln-text"><strong>Informational only.</strong> This is not a safety verdict. Verify NAFDAC status officially at registration.nafdac.gov.ng</div>
+    </div>
+
+    <div style="background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.2);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start">
+      <span style="font-size:16px;flex-shrink:0">💡</span>
+      <div style="font-size:11px;color:var(--text2);line-height:1.6;font-family:var(--fm)">
+        <strong style="color:var(--accent)">Important:</strong> Make sure your photo captures the <strong style="color:var(--text)">COMPLETE ingredients list</strong> — if any part is cut off, the analysis won't be accurate. For Nigerian local products use camera or type; for imported products try the barcode. If text is blurry, typing is most accurate.
+      </div>
+    </div>
+
+    <div class="mtabs" id="modeTabs">
+      <button class="mtab active" onclick="setMode(this,'food')">🍎 Food</button>
+      <button class="mtab" onclick="setMode(this,'medicine')">💊 Medicine</button>
+      <button class="mtab" onclick="setMode(this,'supplement')">🧪 Supplement</button>
+      <button class="mtab" onclick="setMode(this,'cosmetic')">🧴 Cosmetic</button>
+    </div>
+
+    <div class="scard">
+      <div class="cam-zone">
+        <button class="cam-btn" onclick="openCamera()">
+          <div class="cam-icon">📸</div>
+          <div class="cam-title">Tap to Scan Ingredients</div>
+          <div class="cam-sub">Capture the <strong>FULL</strong> ingredients list — make sure none is cut off</div>
+          <div class="cam-pill">📷 OPEN CAMERA</div>
+        </button>
+        <input type="file" id="camInput" accept="image/*" capture="environment" style="display:none" onchange="handleImg(this)">
+        <input type="file" id="galInput" accept="image/*" style="display:none" onchange="handleImg(this)">
+        <div class="img-prev" id="imgPrev">
+          <img id="prevImg" src="" alt="Product">
+          <div class="img-label">CAPTURED</div>
+          <button class="img-close" onclick="clearImg()">✕</button>
+        </div>
+        <div class="or-div"><div></div><span>or</span><div></div></div>
+        <div class="opts">
+          <button class="opt-btn" onclick="document.getElementById('galInput').click()">
+            <div class="opt-emoji">🖼️</div><div class="opt-title">Upload</div><div class="opt-sub">Gallery</div>
+          </button>
+          <button class="opt-btn green" onclick="toggle('bc')">
+            <div class="opt-emoji">📊</div><div class="opt-title g">Barcode</div><div class="opt-sub">Type no.</div>
+          </button>
+          <button class="opt-btn" onclick="toggle('mn')">
+            <div class="opt-emoji">✏️</div><div class="opt-title">Type</div><div class="opt-sub">Details</div>
+          </button>
+        </div>
+      </div>
+      <div class="expand-box bc" id="box-bc">
+        <div class="elabel g">📊 BARCODE NUMBER — looks up real product databases</div>
+        <input class="einput" type="number" id="barcodeVal" placeholder="e.g. 6196849388950" onkeydown="if(event.key==='Enter')runScan()">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.6;margin-top:6px;padding:7px 9px;background:rgba(255,165,2,0.05);border:1px solid rgba(255,165,2,0.15);border-radius:6px">
+          💡 Barcode works best for <strong style="color:var(--text2)">imported products</strong> (Coca-Cola, foreign medicines). Many <strong style="color:var(--text2)">Nigerian local products</strong> are not in global databases yet — for those, use 📸 Camera or ✏️ Type instead.
+        </div>
+        <div id="bcStatus" style="font-size:10px;font-family:var(--fm);margin-top:6px"></div>
+      </div>
+      <div class="expand-box mn" id="box-mn">
+        <div class="elabel b">✏️ PRODUCT DETAILS — Name, ingredients, NAFDAC number</div>
+        <textarea class="einput" id="manualVal" placeholder="e.g. Indomie Chicken Noodles&#10;Ingredients: Wheat flour, palm oil, MSG...&#10;NAFDAC: 08-2858"></textarea>
+      </div>
+      <div class="sactions">
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="ckWHO" checked> WHO</label>
+          <label class="chk"><input type="checkbox" id="ckNAFDAC" checked> NAFDAC</label>
+          <label class="chk"><input type="checkbox" id="ckAllergens" checked> Allergens</label>
+          <label class="chk"><input type="checkbox" id="ckDrug" checked> Drug Interactions</label>
+        </div>
+        <button class="sbtn" id="scanBtn" onclick="runScan()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          ANALYSE PRODUCT
+        </button>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading" id="loading">
+      <div class="sring"></div>
+      <div class="ltxt">ANALYSING PRODUCT...</div>
+      <div class="lsteps">
+        <div class="lstep" id="s1"><span class="sdot"></span>Reading product data</div>
+        <div class="lstep" id="s2"><span class="sdot"></span>Fetching Open Food Facts</div>
+        <div class="lstep" id="s3"><span class="sdot"></span>Analysing ingredients</div>
+        <div class="lstep" id="s4"><span class="sdot"></span>Checking WHO limits</div>
+        <div class="lstep" id="s5"><span class="sdot"></span>Checking your health profile</div>
+        <div class="lstep" id="s6"><span class="sdot"></span>Checking drug interactions</div>
+        <div class="lstep" id="s7"><span class="sdot"></span>Preparing personalised report</div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results">
+      <!-- PERSONAL VERDICT — shows first -->
+      <div id="pVerdictWrap"></div>
+
+      <div class="report-header">
+        <div class="rh-product" id="rhProduct">Product</div>
+        <div class="rh-category" id="rhCategory">Category</div>
+        <div class="rh-row">
+          <div class="rh-left">
+            <div class="cm-label"><span>Concern Level</span><span id="cmLevelText" style="color:var(--accent)">LOW</span></div>
+            <div class="cm-track"><div class="cm-segments" id="cmSegs"></div></div>
+          </div>
+          <div class="rh-badge">
+            <div class="rh-badge-label">CONCERNS</div>
+            <div class="rh-badge-val" id="rhConcerns">0</div>
+          </div>
+        </div>
+        <div class="flags-strip" id="flagsStrip"></div>
+      </div>
+
+      <!-- PERSONAL ALERT -->
+      <div class="personal-alert" id="personalAlert" style="display:none">
+        <div class="pa-header">
+          <span class="pa-icon">🧬</span>
+          <div>
+            <div class="pa-title">Personal Health Analysis</div>
+            <div class="pa-name" id="paName">Based on your health profile</div>
+          </div>
+        </div>
+        <div class="pa-items" id="paItems"></div>
+      </div>
+
+      <div class="rcard">
+        <div class="rtabs">
+          <button class="rtab active" onclick="switchTab(this,'ov')">Analysis</button>
+          <button class="rtab" onclick="switchTab(this,'nu')">Nutrition</button>
+          <button class="rtab" onclick="switchTab(this,'in')">Ingredients</button>
+          <button class="rtab" onclick="switchTab(this,'wh')">WHO Data</button>
+          <button class="rtab" onclick="switchTab(this,'nf')">NAFDAC</button>
+          <button class="rtab" onclick="switchTab(this,'su')">Suitability</button>
+        </div>
+        <div class="rtab-c active" id="tab-ov">
+          <div class="rlabel">AI Product Analysis</div>
+          <div id="aiSum" style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:12px;border-left:2px solid var(--accent);margin-bottom:12px"></div>
+          <div class="rlabel" style="margin-top:14px">Key Findings</div>
+          <div id="findingsBox"></div>
+          <div style="margin-top:12px;padding:9px 11px;background:rgba(255,165,2,0.05);border:1px solid rgba(255,165,2,0.2);border-radius:7px;font-size:10px;color:var(--text2);font-family:var(--fm);line-height:1.7">
+            ⚖️ <strong style="color:var(--warn)">This is AI analysis, not medical advice.</strong> SafeScan AI can make mistakes. Always confirm with a pharmacist, doctor, or NAFDAC before making any health decision. Do not rely on this result alone.
+          </div>
+          <div style="margin-top:8px;padding:9px 11px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.15);border-radius:7px;font-size:10px;color:var(--text2);font-family:var(--fm);line-height:1.7">
+            📚 <strong style="color:var(--accent)">Where this info comes from:</strong><br>
+            • Product & nutrition: Open Food Facts, Open Beauty Facts, Open Products Facts, USDA FoodData<br>
+            • Medicine data: OpenFDA (US FDA) drug labels & warnings<br>
+            • Drug interactions: RxNav (NIH US National Library of Medicine)<br>
+            • Additive & safety limits: World Health Organization (WHO)<br>
+            • Ingredient analysis: SafeScan AI combining all sources above<br>
+            • NAFDAC status: verify yourself at registration.nafdac.gov.ng
+          </div>
+        </div>
+        <div class="rtab-c" id="tab-nu">
+          <div class="rlabel">Nutritional Profile vs WHO Daily Guidelines</div>
+          <div id="nutrBox"></div>
+        </div>
+        <div class="rtab-c" id="tab-in">
+          <div class="rlabel">Ingredient Analysis</div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--fm)">
+            <span style="color:var(--safe)">■</span> No concern &nbsp;<span style="color:var(--warn)">■</span> Caution &nbsp;<span style="color:var(--danger)">■</span> Known concern
+          </div>
+          <div id="ingrBox"></div>
+        </div>
+        <div class="rtab-c" id="tab-wh">
+          <div class="rlabel">WHO Published Safety Standards</div>
+          <div style="font-size:10px;color:var(--text2);margin-bottom:10px;line-height:1.6">Based on <strong style="color:var(--text)">official WHO publications</strong> — not AI opinion.</div>
+          <div id="whoBox"></div>
+        </div>
+        <div class="rtab-c" id="tab-nf">
+          <div class="rlabel">NAFDAC Registration</div>
+          <div id="nafdacBox"></div>
+        </div>
+        <div class="rtab-c" id="tab-su">
+          <div class="rlabel">Suitability Guide</div>
+          <div class="sgrid" id="suitBox"></div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button onclick="scanAgain()" style="flex:1;background:var(--accent);color:#000;border:none;padding:13px;border-radius:10px;font-family:var(--fh);font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-transform:uppercase">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          Scan Again
+        </button>
+        <button onclick="shareResult()" style="flex:1;background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border);padding:13px;border-radius:10px;font-family:var(--fh);font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-transform:uppercase">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+      </div>
+
+      <div class="disc">
+        <span class="ldot"></span>
+        <strong>LEGAL DISCLAIMER:</strong> SafeScan AI by Unrugpad provides informational analysis only. Not a certified safety verdict. For NAFDAC verification visit <strong>registration.nafdac.gov.ng</strong> or call <strong>0800-162-3322</strong>. Consult a qualified healthcare professional for medical advice.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PROFILE PAGE ═══════════ -->
+<div class="page" id="page-profile">
+  <div class="wrap">
+    <div class="profile-page">
+      <div class="pp-title">My Health Profile</div>
+      <div class="pp-sub">Your profile is used to personalise every scan result</div>
+
+      <!-- BASIC INFO -->
+      <div class="pform-section">
+        <div class="pfs-title">Basic Clinical Statistics</div>
+        <div class="pform-grid">
+          <div class="pfield pform-full">
+            <label>Full Name</label>
+            <input type="text" id="pName" placeholder="e.g. Chukwuemeka">
+          </div>
+          <div class="pfield">
+            <label>Age (Years)</label>
+            <input type="number" id="pAge" placeholder="e.g. 28">
+          </div>
+          <div class="pfield">
+            <label>Weight (kg)</label>
+            <input type="number" id="pWeight" placeholder="e.g. 72.5">
+          </div>
+          <div class="pfield">
+            <label>Blood Type</label>
+            <select id="pBlood">
+              <option value="">Select</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+          <div class="pfield">
+            <label>Gender</label>
+            <select id="pGender">
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDICAL CONDITIONS -->
+      <div class="pform-section">
+        <div class="pfs-title">Medical Pre-conditions & Concerns</div>
+        <div class="pform-grid">
+          <div class="pfield pform-full">
+            <label>Allergies (comma separated)</label>
+            <input type="text" id="pAllergies" placeholder="e.g. Gluten, Peanuts, Lactose, Alcohol">
+            <div style="font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.6;margin-top:2px">
+              💡 <strong style="color:var(--text2)">Allergies</strong> are foods or substances your body reacts badly to — causing rashes, swelling, stomach upset or breathing trouble. Common ones: peanuts, milk, gluten, eggs, fish, soy. Leave blank if you have none.
+            </div>
+          </div>
+          <div class="pfield pform-full">
+            <label>Chronic Conditions (comma separated)</label>
+            <input type="text" id="pConditions" placeholder="e.g. Diabetes, Hypertension, Asthma">
+          </div>
+          <div class="pfield pform-full">
+            <label>Active Medications (name + dose)</label>
+            <input type="text" id="pMedications" placeholder="e.g. Aspirin 100mg, Metformin 500mg, Lisinopril 10mg">
+          </div>
+          <div class="pfield pform-full">
+            <label>Dietary Preferences</label>
+            <input type="text" id="pDiet" placeholder="e.g. Vegan, Halal, Lactose-free, Gluten-free">
+            <div style="font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.6;margin-top:2px">
+              💡 <strong style="color:var(--text2)">Dietary preferences</strong> are food choices you follow by personal, religious or health reasons — like Vegan (no animal products), Halal, Vegetarian, Gluten-free or Sugar-free. SafeScan warns you if a product doesn't match your diet.
+            </div>
+          </div>
+          <div class="pfield pform-full">
+            <label>Pregnancy / Breastfeeding</label>
+            <select id="pPregnancy">
+              <option value="no">No</option>
+              <option value="pregnant">Currently Pregnant</option>
+              <option value="breastfeeding">Breastfeeding</option>
+              <option value="trying">Trying to Conceive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveProfile()">💾 SAVE PROFILE</button>
+      <div class="saved-toast" id="savedToast">✓ Profile saved! Your scans are now personalised.</div>
+
+      <div class="disc" style="margin-top:16px">
+        <span class="ldot"></span>
+        Your health profile is stored <strong>only on your device</strong> — never sent to any server. It is used locally to personalise your scan analysis.
+      </div>
+
+      <!-- GLOSSARY -->
+      <div style="margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);font-family:var(--fh);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px">
+          <span>📖</span> Quick Health Glossary
+        </div>
+        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:3px">Allergies</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">Foods or substances your body reacts badly to — causing rashes, itching, swelling, stomach upset, or breathing problems. Common: peanuts, milk (lactose), gluten, eggs, fish, soy, alcohol.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--warn);margin-bottom:3px">Chronic Conditions</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">Long-term health issues you live with. Examples: Diabetes (blood sugar problems), Hypertension (high blood pressure), Asthma (breathing condition), Kidney disease.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--safe);margin-bottom:3px">Active Medications</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">Drugs you currently take. SafeScan checks if a scanned product interacts with them. Include the dose if you know it, e.g. "Aspirin 100mg".</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--warn);margin-bottom:3px">Dietary Preferences</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">Food choices you follow — by personal choice, religion or health. Examples: Vegan (no animal products), Vegetarian, Halal, Kosher, Gluten-free, Lactose-free, Sugar-free. SafeScan flags products that don't match.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:3px">Why this matters</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">The more SafeScan knows about your body, the better it can tell you whether a product is right for <strong style="color:var(--text)">you specifically</strong> — not just people in general.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav-item active" id="nav-dashboard" onclick="goPage('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span class="bnav-label">Dashboard</span>
+    <span class="bnav-dot"></span>
+  </button>
+  <button class="bnav-item" id="nav-scanner" onclick="goPage('scanner')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+    <span class="bnav-label">Scanner</span>
+    <span class="bnav-dot"></span>
+  </button>
+  <button class="bnav-item" id="nav-profile" onclick="goPage('profile')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="bnav-label">My Profile</span>
+    <span class="bnav-dot"></span>
+  </button>
+</nav>
+
+<script>
+let imgB64=null,imgMime=null,curMode='food';
+let lastReport=null;
+
+function scanAgain(){
+  clearImg();
+  document.getElementById('manualVal').value='';
+  document.getElementById('barcodeVal').value='';
+  document.getElementById('box-mn').style.display='none';
+  document.getElementById('box-bc').style.display='none';
+  document.getElementById('bcStatus').textContent='';
+  document.getElementById('results').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareResult(){
+  if(!lastReport)return;
+  const r=lastReport;
+  const profile=getProfile();
+  const pv=r.personalVerdict;
+  let text=`🔍 SafeScan AI Report\n\n`;
+  text+=`Product: ${r.productName||'Unknown'}\n`;
+  text+=`Category: ${(r.category||'').toUpperCase()}\n`;
+  if(pv&&profile.name) text+=`\nVerdict for ${profile.name}: ${pv.headline||''}\n${pv.reason||''}\n`;
+  text+=`\nConcern Level: ${(r.concernLevel||'low').toUpperCase()}\n`;
+  if(r.summary) text+=`\n${r.summary}\n`;
+  if(r.nafdacNo) text+=`\nNAFDAC No: ${r.nafdacNo} — verify at registration.nafdac.gov.ng\n`;
+  text+=`\n⚖️ AI analysis only — not medical advice. Confirm with a pharmacist or doctor.\n`;
+  text+=`\nScanned with SafeScan AI by Unrugpad`;
+
+  if(navigator.share){
+    navigator.share({title:'SafeScan AI Report',text:text}).catch(()=>{});
+  }else{
+    // Fallback — copy to clipboard
+    navigator.clipboard.writeText(text).then(()=>{
+      alert('✓ Report copied! You can now paste and share it on WhatsApp, SMS or anywhere.');
+    }).catch(()=>{
+      // Final fallback — show text
+      prompt('Copy this report to share:',text);
+    });
+  }
+}
+
+// WHO DATA
+const WHO={
+  additives:{
+    'e621':{name:'MSG',note:'WHO: ADI not specified. Safe in moderation. Some sensitivity reported.',level:'caution'},
+    'e150d':{name:'Caramel Color IV',note:'WHO JECFA ADI: 0-200mg/kg. Contains 4-MEI.',level:'caution'},
+    'e211':{name:'Sodium Benzoate',note:'WHO ADI: 0-5mg/kg. Forms benzene with Vit C. Hyperactivity concern in children.',level:'caution'},
+    'e102':{name:'Tartrazine',note:'WHO ADI: 0-7.5mg/kg. Allergic reactions possible.',level:'caution'},
+    'e250':{name:'Sodium Nitrite',note:'WHO IARC Group 2A carcinogen in processed meats. ADI: 0-0.07mg/kg.',level:'concern'},
+    'e951':{name:'Aspartame',note:'WHO 2023 Group 2B possibly carcinogenic. ADI: 40mg/kg/day.',level:'caution'},
+    'msg':{name:'MSG',note:'WHO: ADI not specified. Safe in moderation.',level:'caution'},
+    'monosodium glutamate':{name:'MSG',note:'WHO: ADI not specified. Some individuals report sensitivity.',level:'caution'},
+    'sodium benzoate':{name:'Sodium Benzoate',note:'WHO ADI: 0-5mg/kg. Hyperactivity concern.',level:'caution'},
+    'aspartame':{name:'Aspartame',note:'WHO 2023 Group 2B possibly carcinogenic.',level:'caution'},
+    'sodium nitrite':{name:'Sodium Nitrite',note:'WHO IARC Group 2A carcinogen in processed meats.',level:'concern'},
+    'caffeine':{name:'Caffeine',note:'WHO: Max 400mg/day adults. 200mg/day pregnant. None for children.',level:'caution'},
+    'tartrazine':{name:'Tartrazine',note:'WHO ADI: 0-7.5mg/kg. Hyperactivity in children.',level:'caution'},
+  },
+  banned:['sudan red','rhodamine b','malachite green','melamine','formaldehyde','methanol','lead acetate'],
+  medicines:{
+    'paracetamol':{note:'WHO Essential Medicine. Max 4000mg/day adults. Hepatotoxic in overdose. Safe in pregnancy at recommended doses.',level:'safe'},
+    'ibuprofen':{note:'WHO Essential Medicine. Avoid: kidney disease, peptic ulcer, pregnancy third trimester.',level:'caution'},
+    'aspirin':{note:'WHO Essential Medicine. Avoid in children under 16. Antiplatelet effect. Avoid with peptic ulcer.',level:'caution'},
+    'metronidazole':{note:'WHO Essential Medicine. Absolute contraindication with alcohol.',level:'caution'},
+    'amoxicillin':{note:'WHO Essential Medicine. Antibiotic — requires prescription. Allergic reactions possible.',level:'caution'},
+  },
+  drugInteractions:{
+    'caffeine+aspirin':'Caffeine increases gastric absorption of Aspirin — may increase therapeutic effect but elevates stomach irritation risk.',
+    'caffeine+ibuprofen':'Caffeine may increase ibuprofen absorption. Monitor for increased GI side effects.',
+    'alcohol+metronidazole':'DANGEROUS: Severe disulfiram-like reaction — vomiting, flushing, rapid heartbeat.',
+    'alcohol+aspirin':'Increases risk of gastrointestinal bleeding significantly.',
+    'alcohol+ibuprofen':'Increases risk of stomach ulcers and kidney damage.',
+    'sugar+metformin':'High sugar intake reduces effectiveness of metformin in blood glucose control.',
+    'caffeine+metformin':'No significant interaction. Monitor blood sugar as caffeine can affect glucose levels.',
+    'sodium+lisinopril':'High sodium intake reduces effectiveness of lisinopril (ACE inhibitor) blood pressure control.',
+    'sodium+amlodipine':'High sodium reduces effectiveness of calcium channel blockers.',
+    'potassium+lisinopril':'Lisinopril increases potassium retention — avoid high-potassium foods.',
+  }
+};
+
+function getWHOFindings(text){
+  const t=text.toLowerCase(),f=[];
+  Object.entries(WHO.additives).forEach(([k,v])=>{if(t.includes(k))f.push(v);});
+  WHO.banned.forEach(b=>{if(t.includes(b))f.push({name:b.toUpperCase(),note:'WHO: Prohibited substance in food/medicine.',level:'concern'});});
+  Object.entries(WHO.medicines).forEach(([k,v])=>{if(t.includes(k))f.push({name:k.charAt(0).toUpperCase()+k.slice(1),...v});});
+  return f;
+}
+
+function checkDrugInteractions(productText, medications){
+  if(!medications) return [];
+  const pt=productText.toLowerCase();
+  const meds=medications.toLowerCase().split(',').map(m=>m.trim());
+  const findings=[];
+  const ingredients=['caffeine','alcohol','sugar','sodium','potassium','aspirin','ibuprofen','paracetamol','metformin','lisinopril','amlodipine','metronidazole'];
+  ingredients.forEach(ing=>{
+    if(pt.includes(ing)){
+      meds.forEach(med=>{
+        const key=`${ing}+${med.split(' ')[0]}`;
+        const rkey=`${med.split(' ')[0]}+${ing}`;
+        const interaction=WHO.drugInteractions[key]||WHO.drugInteractions[rkey];
+        if(interaction) findings.push({ingredient:ing,medication:med,interaction});
+      });
+    }
+  });
+  return findings;
+}
+
+function getProfile(){
+  return JSON.parse(localStorage.getItem('safescan_profile')||'{}');
+}
+
+// NAVIGATION
+function goPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  if(page==='dashboard') updateDashboard();
+  window.scrollTo(0,0);
+}
+function goToScanner(){goPage('scanner');}
+
+// PROFILE
+function saveProfile(){
+  const profile={
+    name:document.getElementById('pName').value,
+    age:document.getElementById('pAge').value,
+    weight:document.getElementById('pWeight').value,
+    blood:document.getElementById('pBlood').value,
+    gender:document.getElementById('pGender').value,
+    allergies:document.getElementById('pAllergies').value,
+    conditions:document.getElementById('pConditions').value,
+    medications:document.getElementById('pMedications').value,
+    diet:document.getElementById('pDiet').value,
+    pregnancy:document.getElementById('pPregnancy').value,
+  };
+  localStorage.setItem('safescan_profile',JSON.stringify(profile));
+  const toast=document.getElementById('savedToast');
+  toast.style.display='block';
+  setTimeout(()=>toast.style.display='none',3000);
+  updateDashboard();
+}
+
+function loadProfileForm(){
+  const p=getProfile();
+  if(p.name) document.getElementById('pName').value=p.name||'';
+  if(p.age) document.getElementById('pAge').value=p.age||'';
+  if(p.weight) document.getElementById('pWeight').value=p.weight||'';
+  if(p.blood) document.getElementById('pBlood').value=p.blood||'';
+  if(p.gender) document.getElementById('pGender').value=p.gender||'';
+  if(p.allergies) document.getElementById('pAllergies').value=p.allergies||'';
+  if(p.conditions) document.getElementById('pConditions').value=p.conditions||'';
+  if(p.medications) document.getElementById('pMedications').value=p.medications||'';
+  if(p.diet) document.getElementById('pDiet').value=p.diet||'';
+  if(p.pregnancy) document.getElementById('pPregnancy').value=p.pregnancy||'no';
+}
+
+function updateDashboard(){
+  const p=getProfile();
+  const history=JSON.parse(localStorage.getItem('safescan_history')||'[]');
+  document.getElementById('dashName').textContent=p.name||'SafeScan User';
+  document.getElementById('dashSub').textContent=p.name?`Welcome back, ${p.name.split(' ')[0]}! Stay healthy.`:'Set up your health profile for personalised analysis';
+  const chips=document.getElementById('profileChips');
+  const chipArr=[];
+  if(p.allergies) p.allergies.split(',').forEach(a=>{if(a.trim())chipArr.push(`<span class="pchip pc-allergy">⚠ ${a.trim()}</span>`);});
+  if(p.conditions) p.conditions.split(',').forEach(c=>{if(c.trim())chipArr.push(`<span class="pchip pc-condition">🏥 ${c.trim()}</span>`);});
+  if(p.medications) p.medications.split(',').forEach(m=>{if(m.trim())chipArr.push(`<span class="pchip pc-med">💊 ${m.trim().split(' ')[0]}</span>`);});
+  chips.innerHTML=chipArr.length?chipArr.join(''):'<span class="pchip pc-empty">No profile set — tap My Profile</span>';
+  document.getElementById('statScans').textContent=history.length;
+  document.getElementById('statConcerns').textContent=history.reduce((a,h)=>a+(h.concernCount||0),0);
+  const histList=document.getElementById('historyList');
+  if(history.length===0){histList.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-family:var(--fm);font-size:12px">No scans yet.<br>Tap Scan a Product to get started.</div>';return;}
+  histList.innerHTML=history.slice().reverse().slice(0,10).map((h,i)=>`
+    <div class="hist-item" onclick="viewHistoryScan(${history.length-1-i})">
+      <div class="hist-icon hi-${h.level||'low'}">${h.emoji||'📦'}</div>
+      <div class="hist-info">
+        <div class="hi-name">${h.name||'Unknown Product'}</div>
+        <div class="hi-meta">${h.category||''} · ${h.date||''}</div>
+        <div class="hi-flags">${(h.flags||[]).slice(0,3).map(f=>`<span class="hi-flag" style="color:${f.type==='alert'?'var(--danger)':f.type==='warn'?'var(--warn)':'var(--accent)'};border-color:${f.type==='alert'?'rgba(255,71,87,0.3)':f.type==='warn'?'rgba(255,165,2,0.3)':'rgba(0,229,255,0.2)'};background:${f.type==='alert'?'rgba(255,71,87,0.06)':f.type==='warn'?'rgba(255,165,2,0.06)':'rgba(0,229,255,0.04)'}">${f.label}</span>`).join('')}</div>
+      </div>
+      <span class="hist-level hl-${h.level||'low'}">${(h.level||'LOW').toUpperCase()}</span>
+    </div>`).join('');
+}
+
+function clearHistory(){
+  if(confirm('Clear all scan history?')){localStorage.removeItem('safescan_history');updateDashboard();}}
+
+function saveToHistory(report){
+  const history=JSON.parse(localStorage.getItem('safescan_history')||'[]');
+  history.push({
+    name:report.productName||'Unknown',
+    category:report.category||'',
+    level:report.concernLevel||'low',
+    concernCount:report.concernCount||0,
+    flags:(report.flags||[]).slice(0,3),
+    emoji:report.category==='medicine'?'💊':report.category==='food'?'🍎':report.category==='supplement'?'🧪':'🧴',
+    date:new Date().toLocaleDateString('en-NG',{day:'numeric',month:'short',year:'numeric'}),
+    report:report
+  });
+  localStorage.setItem('safescan_history',JSON.stringify(history.slice(-50)));
+}
+
+function viewHistoryScan(idx){
+  const history=JSON.parse(localStorage.getItem('safescan_history')||'[]');
+  if(history[idx]){goPage('scanner');setTimeout(()=>{render(history[idx].report,'');},100);}
+}
+
+// SCANNER
+function setMode(btn,m){document.querySelectorAll('.mtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curMode=m;}
+function toggle(id){
+  const bc=document.getElementById('box-bc'),mn=document.getElementById('box-mn');
+  if(id==='bc'){bc.style.display=bc.style.display==='none'?'block':'none';mn.style.display='none';if(bc.style.display==='block')setTimeout(()=>document.getElementById('barcodeVal').focus(),100);}
+  else{mn.style.display=mn.style.display==='none'?'block':'none';bc.style.display='none';if(mn.style.display==='block')setTimeout(()=>document.getElementById('manualVal').focus(),100);}
+}
+function openCamera(){document.getElementById('camInput').click();}
+function clearImg(){imgB64=null;imgMime=null;document.getElementById('imgPrev').style.display='none';document.getElementById('prevImg').src='';document.getElementById('camInput').value='';document.getElementById('galInput').value='';}
+function handleImg(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      // Resize image to max 1000px to cut token cost dramatically
+      const canvas=document.createElement('canvas');
+      let w=img.width,h=img.height;
+      const max=1000;
+      if(w>max||h>max){
+        if(w>h){h=Math.round(h*max/w);w=max;}
+        else{w=Math.round(w*max/h);h=max;}
+      }
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.7);
+      imgB64=compressed.split(',')[1];
+      imgMime='image/jpeg';
+      document.getElementById('prevImg').src=compressed;
+      document.getElementById('imgPrev').style.display='block';
+      runScan();
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+function switchTab(btn,id){
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.rtab-c').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tab-'+id).classList.add('active');
+}
+
+const EX={
+  coca:'Product: Coca-Cola Classic 330ml\nIngredients: Carbonated water, sugar, caramel colour (E150d), phosphoric acid, natural flavourings, caffeine\nNutrition per 100ml: Energy 42kcal, Sugar 10.6g, Sodium 10mg',
+  para:'Product: Paracetamol 500mg Tablets (Emzor)\nNAFDAC: A4-0335\nActive: Paracetamol 500mg\nManufacturer: Emzor Pharmaceutical Nigeria',
+  indomie:'Product: Indomie Chicken Noodles 70g\nNAFDAC: 01-1234\nIngredients: Wheat flour, palm oil, salt, sugar, MSG (E621), chicken flavour, E150d, soy sauce\nNutrition: Energy 320kcal, Fat 12g, Sodium 1200mg, Sugar 3g',
+  monster:'Product: Monster Energy 500ml\nIngredients: Carbonated water, sucrose, glucose, taurine 0.4%, caffeine 160mg, niacinamide, ginseng, L-carnitine\nSugar: 54g per can',
+  vitc:'Product: Revital Vitamin C 500mg + Zinc\nNAFDAC: B4-0421\nActive: Ascorbic acid 500mg, Zinc 10mg\nManufacturer: Ranbaxy Nigeria'
+};
+function fillEx(k){document.getElementById('box-mn').style.display='block';document.getElementById('manualVal').value=EX[k];}
+
+async function animSteps(){
+  const steps=['s1','s2','s3','s4','s5','s6','s7'],delays=[200,550,900,1250,1600,1950,2300];
+  for(let i=0;i<steps.length;i++){
+    await new Promise(r=>setTimeout(r,delays[i]));
+    if(i>0)document.getElementById(steps[i-1]).classList.add('done');
+    document.getElementById(steps[i]).classList.add('active');
+  }
+}
+
+// ── EXTRA DATA SOURCES ──
+// OpenFDA — free US FDA drug data (good for medicines)
+async function queryOpenFDA(drugName){
+  if(!drugName)return '';
+  try{
+    const q=encodeURIComponent(drugName.split(' ')[0]);
+    const r=await fetch(`https://api.fda.gov/drug/label.json?search=openfda.generic_name:${q}+openfda.brand_name:${q}&limit=1`,{signal:AbortSignal.timeout(6000)});
+    const d=await r.json();
+    if(d.results&&d.results[0]){
+      const res=d.results[0];
+      let info='\n[VERIFIED DRUG DATA — Source: OpenFDA (US FDA)]\n';
+      if(res.openfda&&res.openfda.generic_name)info+=`Generic: ${res.openfda.generic_name.join(', ')}\n`;
+      if(res.purpose)info+=`Purpose: ${res.purpose[0].slice(0,200)}\n`;
+      if(res.warnings)info+=`Warnings: ${res.warnings[0].slice(0,300)}\n`;
+      if(res.drug_interactions)info+=`Interactions: ${res.drug_interactions[0].slice(0,250)}\n`;
+      return info;
+    }
+  }catch(e){}
+  return '';
+}
+
+// USDA FoodData Central — free US gov nutrition (DEMO_KEY allows limited use)
+async function queryUSDA(foodName){
+  if(!foodName)return '';
+  try{
+    const q=encodeURIComponent(foodName);
+    const r=await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?query=${q}&pageSize=1&api_key=DEMO_KEY`,{signal:AbortSignal.timeout(6000)});
+    const d=await r.json();
+    if(d.foods&&d.foods[0]){
+      const f=d.foods[0];
+      let info='\n[NUTRITION REFERENCE — Source: USDA FoodData Central]\n';
+      info+=`Match: ${f.description}\n`;
+      const want={'Energy':'kcal','Sugars, total including NLEA':'g sugar','Total lipid (fat)':'g fat','Sodium, Na':'mg sodium','Protein':'g protein'};
+      (f.foodNutrients||[]).forEach(n=>{
+        if(want[n.nutrientName])info+=`${n.nutrientName}: ${n.value}${n.unitName||''} `;
+      });
+      return info;
+    }
+  }catch(e){}
+  return '';
+}
+
+// ── RxNav (NIH National Library of Medicine) — real drug interaction data ──
+// Step 1: normalize a drug name to its RxCUI code
+async function getRxCUI(drugName){
+  if(!drugName)return null;
+  try{
+    const q=encodeURIComponent(drugName.split(/\s|\d/)[0].trim());
+    const r=await fetch(`https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${q}&search=2`,{signal:AbortSignal.timeout(5000)});
+    const d=await r.json();
+    return d.idGroup&&d.idGroup.rxnormId?d.idGroup.rxnormId[0]:null;
+  }catch(e){return null;}
+}
+
+// Step 2: check interactions between the product ingredient and the user's medications via RxNav
+async function checkRxNavInteractions(productText, medications){
+  if(!medications)return '';
+  const meds=medications.split(',').map(m=>m.trim()).filter(Boolean);
+  const ingredientWords=['ibuprofen','aspirin','paracetamol','acetaminophen','caffeine','metformin','warfarin','amoxicillin','metronidazole','codeine','diclofenac'];
+  const pt=productText.toLowerCase();
+  const foundIngredients=ingredientWords.filter(w=>pt.includes(w));
+  let results='';
+  for(const med of meds.slice(0,3)){
+    const medCui=await getRxCUI(med);
+    if(!medCui)continue;
+    for(const ing of foundIngredients.slice(0,2)){
+      const ingCui=await getRxCUI(ing);
+      if(!ingCui)continue;
+      try{
+        const r=await fetch(`https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=${medCui}+${ingCui}`,{signal:AbortSignal.timeout(6000)});
+        const d=await r.json();
+        const groups=d.fullInteractionTypeGroup||[];
+        groups.forEach(g=>{
+          (g.fullInteractionType||[]).forEach(t=>{
+            (t.interactionPair||[]).forEach(pair=>{
+              results+=`${med} + ${ing}: ${pair.description||pair.severity||'interaction found'}\n`;
+            });
+          });
+        });
+      }catch(e){}
+    }
+  }
+  return results?'\n[VERIFIED DRUG INTERACTIONS — Source: RxNav, NIH National Library of Medicine]\n'+results:'';
+}
+
+async function runScan(){
+  const manual=(document.getElementById('manualVal').value||'').trim();
+  const barcode=(document.getElementById('barcodeVal').value||'').toString().trim();
+  if(!manual&&!barcode&&!imgB64){
+    document.getElementById('box-mn').style.display='block';
+    const ta=document.getElementById('manualVal');ta.focus();
+    ta.style.borderColor='rgba(255,71,87,0.5)';setTimeout(()=>ta.style.borderColor='',1500);return;
+  }
+  const btn=document.getElementById('scanBtn');btn.disabled=true;
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('results').style.display='none';
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>document.getElementById(s).classList.remove('active','done'));
+  animSteps();
+
+  const profile=getProfile();
+
+  try{
+    // Barcode lookup — checks MULTIPLE databases
+    let barcodeText='';
+    let dbNutrition=null;
+    let dbSource='';
+    if(barcode){
+      document.getElementById('bcStatus').style.color='var(--accent)';
+      document.getElementById('bcStatus').textContent='Checking multiple databases...';
+      const dbs=[
+        {name:'Open Food Facts',url:`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`},
+        {name:'Open Beauty Facts',url:`https://world.openbeautyfacts.org/api/v0/product/${barcode}.json`},
+        {name:'Open Products Facts',url:`https://world.openproductsfacts.org/api/v0/product/${barcode}.json`}
+      ];
+      for(const db of dbs){
+        try{
+          const r=await fetch(db.url,{signal:AbortSignal.timeout(6000)});
+          const d=await r.json();
+          if(d.status===1&&d.product){
+            const p=d.product,n=p.nutriments||{};
+            dbSource=db.name;
+            // Capture real structured nutrition from the database
+            dbNutrition={
+              energy:n.energy_100g||n['energy-kcal_100g'],
+              sugar:n.sugars_100g,
+              fat:n.fat_100g,
+              satfat:n['saturated-fat_100g'],
+              sodium:n.sodium_100g!=null?Math.round(n.sodium_100g*1000):null,
+              salt:n.salt_100g,
+              protein:n.proteins_100g,
+              carbs:n.carbohydrates_100g,
+              fiber:n.fiber_100g
+            };
+            barcodeText=`\n[VERIFIED DATA — Source: ${db.name}]\nProduct:${p.product_name||p.product_name_en||'Unknown'}\nBrand:${p.brands||''}\nIngredients:${p.ingredients_text||p.ingredients_text_en||'Not listed'}\nNutrition per 100g: Energy:${dbNutrition.energy||'?'}kcal Sugar:${dbNutrition.sugar??'?'}g Fat:${dbNutrition.fat??'?'}g SatFat:${dbNutrition.satfat??'?'}g Sodium:${dbNutrition.sodium??'?'}mg Protein:${dbNutrition.protein??'?'}g Carbs:${dbNutrition.carbs??'?'}g Fibre:${dbNutrition.fiber??'?'}g\nAllergens:${(p.allergens_tags||[]).map(a=>a.replace('en:','')).join(', ')||'None listed'}`;
+            document.getElementById('bcStatus').style.color='var(--safe)';
+            document.getElementById('bcStatus').textContent='✓ Found in '+db.name;
+            break;
+          }
+        }catch(e){}
+      }
+      if(!barcodeText){
+        document.getElementById('bcStatus').style.color='var(--text3)';
+        document.getElementById('bcStatus').textContent='Not found in databases — analysing from your input';
+      }
+    }
+
+    const whoFindings=getWHOFindings(manual+barcodeText);
+    const whoCtx=whoFindings.length?'\nWHO DATA:\n'+whoFindings.map(f=>`${f.name}: ${f.note}`).join('\n'):'';
+    const nafdacMatch=(manual+barcodeText).match(/(?:nafdac[^:]*:|nrn[^:]*:|reg\s*no[^:]*:)\s*([A-Za-z0-9]{1,3}-\d{3,8})/i);
+    const nafdacNo=nafdacMatch?nafdacMatch[1]:'';
+
+    // If image scan with no barcode, try to find a barcode number in the image text (manual) and search databases
+    if(!barcodeText && (imgB64||manual)){
+      // Look for a barcode-like number (8-14 digits) in the typed/manual text
+      const bcInText=(manual).match(/\b(\d{8,14})\b/);
+      if(bcInText){
+        for(const db of [
+          {name:'Open Food Facts',url:`https://world.openfoodfacts.org/api/v0/product/${bcInText[1]}.json`},
+          {name:'Open Beauty Facts',url:`https://world.openbeautyfacts.org/api/v0/product/${bcInText[1]}.json`}
+        ]){
+          try{
+            const r=await fetch(db.url,{signal:AbortSignal.timeout(5000)});
+            const d=await r.json();
+            if(d.status===1&&d.product){
+              const p=d.product,n=p.nutriments||{};
+              dbSource=db.name;
+              dbNutrition={energy:n.energy_100g||n['energy-kcal_100g'],sugar:n.sugars_100g,fat:n.fat_100g,satfat:n['saturated-fat_100g'],sodium:n.sodium_100g!=null?Math.round(n.sodium_100g*1000):null,protein:n.proteins_100g,carbs:n.carbohydrates_100g,fiber:n.fiber_100g};
+              barcodeText=`\n[VERIFIED DATA — Source: ${db.name}]\nProduct:${p.product_name||'Unknown'}\nIngredients:${p.ingredients_text||p.ingredients_text_en||''}\nNutrition/100g: Sugar:${dbNutrition.sugar??'?'}g Fat:${dbNutrition.fat??'?'}g Sodium:${dbNutrition.sodium??'?'}mg Protein:${dbNutrition.protein??'?'}g`;
+              break;
+            }
+          }catch(e){}
+        }
+      }
+    }
+
+    // Pull from extra authority sources based on what we're scanning
+    let extraSources='';
+    const searchTerm=(manual.split('\n')[0]||'').replace(/product:?/i,'').trim();
+    if((curMode==='medicine')&&searchTerm){
+      document.getElementById('bcStatus')&&(document.getElementById('bcStatus').textContent='Checking FDA drug data...');
+      extraSources+=await queryOpenFDA(searchTerm);
+    }
+    if((curMode==='food'||curMode==='supplement')&&searchTerm&&!dbNutrition){
+      extraSources+=await queryUSDA(searchTerm);
+    }
+    // Real drug interaction check via RxNav (NIH) when user has medications
+    if(document.getElementById('ckDrug').checked && profile.medications){
+      const rxResults=await checkRxNavInteractions(manual+barcodeText+' '+searchTerm,profile.medications);
+      if(rxResults)extraSources+=rxResults;
+    }
+
+    // Build personalised profile context — FULL profile goes in
+    const profileCtx=profile.name?`
+PATIENT HEALTH PROFILE (consider EVERY field below in your analysis):
+Name: ${profile.name}
+Age: ${profile.age||'unknown'} years
+Weight: ${profile.weight||'unknown'} kg
+Blood Type: ${profile.blood||'unknown'}
+Gender: ${profile.gender||'unknown'}
+Allergies: ${profile.allergies||'none'}
+Chronic Conditions / Sicknesses: ${profile.conditions||'none'}
+Active Medications: ${profile.medications||'none'}
+Dietary Preferences: ${profile.diet||'none'}
+Pregnancy/Breastfeeding: ${profile.pregnancy||'no'}
+
+IMPORTANT: Analyse the product against ALL of the above (every allergy, every sickness, every medication, age, weight, blood type, diet, pregnancy). BUT in your response, only MENTION the profile factors that are actually RELEVANT to this specific product. Do not list factors that don't matter for this product. Create a personalAlert for each RELEVANT factor only. If a factor is not relevant, leave it out — keep the result clean.`:'No health profile provided — give general analysis and prompt user to set up profile.';
+
+    // Drug interaction check
+    const drugInteractions=document.getElementById('ckDrug').checked&&profile.medications?checkDrugInteractions(manual+barcodeText,profile.medications):[];
+
+    const sys=`SafeScan AI by Unrugpad. Informational analysis only — never say safe/unsafe/genuine/fake. Return ONLY compact JSON:
+{"imageReadable":true,"productName":"","brandName":"","barcodeSeen":"","category":"food|medicine|supplement|cosmetic","concernCount":0,"concernLevel":"low|medium|high","personalVerdict":{"rating":"good|caution|avoid","icon":"emoji","headline":"3-4 words","reason":"1 sentence citing the person's specific profile factors"},"flags":[{"label":"","type":"info|warn|alert|safe"}],"summary":"2 factual sentences","findings":[{"icon":"emoji","text":"","type":"info|warn|alert|safe"}],"nutrition":[{"name":"","value":"","percent":0-100,"level":"safe|warn|danger","who":""}],"ingredients":[{"name":"","level":"safe|caution|concern","reason":""}],"personalAlerts":[{"type":"allergy|drug_interaction|condition|clear","icon":"emoji","title":"","message":""}],"nafdacNo":"","suitability":[{"group":"","emoji":"","suitable":true,"reason":""}]}
+RULES: Be CONSISTENT — for the same product always use the same product name and category, and judge concern level by the fixed thresholds below (do not vary). If image shows a barcode number put it in "barcodeSeen". Put product & brand names in productName/brandName. If image text is BLURRY/dark/unreadable set "imageReadable":false and don't guess. Name the product exactly as printed — do not reinterpret (e.g. if it says yogurt drink, do not call it infant formula). NEVER assume or invent nutrition values — if a value (e.g. sodium, sugar) is not visible on the label or in the data, explicitly state it as "Data unavailable" in nutrition and findings rather than guessing or skipping it. Consider the patient's ENTIRE profile (age, weight, blood type, gender, every allergy, every chronic condition/sickness, every medication, diet, pregnancy) but only MENTION and create personalAlerts for the factors that are actually RELEVANT to this product — leave out factors that don't matter so the result stays clean. personalVerdict must cite the relevant profile factors. Read image text exactly, never invent NAFDAC numbers. concernLevel low=0-2 med=3-5 high=6+. Sodium>600mg/100g=warn >1200=danger; sugar>15g=warn >25=danger. Keep all text short. JSON only.`;
+
+    const prompt=`Mode:${curMode}
+${imgB64?'[IMAGE ATTACHED — read every character exactly as printed on label]':''}
+${barcodeText}
+${extraSources}
+${whoCtx}
+${nafdacNo?'NAFDAC NUMBER ON LABEL: '+nafdacNo:''}
+${profileCtx}
+${drugInteractions.length?'DETECTED DRUG INTERACTIONS:\n'+drugInteractions.map(d=>`${d.ingredient} + ${d.medication}: ${d.interaction}`).join('\n'):''}
+${manual?'USER INPUT:\n'+manual:''}
+Combine ALL the verified data sources above with the patient profile and return the complete personalised analysis JSON.`;
+
+    const content=[];
+    if(imgB64)content.push({type:'image',source:{type:'base64',media_type:imgMime,data:imgB64}});
+    content.push({type:'text',text:prompt});
+
+    const res=await fetch('/api/analyze',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:1000,system:sys,messages:[{role:'user',content}]})
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message||data.error);
+    const raw=data.content?.[0]?.text||'';
+    if(!raw)throw new Error('Empty response.');
+    let clean=raw.replace(/```json|```/g,'').trim();
+    let report;
+    try{
+      report=JSON.parse(clean);
+    }catch(e){
+      // Try to extract the JSON object
+      const m=clean.match(/\{[\s\S]*\}/);
+      if(m){
+        try{report=JSON.parse(m[0]);}
+        catch(e2){
+          // Attempt to repair truncated JSON by closing open structures
+          let repaired=m[0];
+          // Remove trailing incomplete content after last complete element
+          repaired=repaired.replace(/,\s*$/,'');
+          // Count and close brackets
+          const openBraces=(repaired.match(/\{/g)||[]).length;
+          const closeBraces=(repaired.match(/\}/g)||[]).length;
+          const openBrackets=(repaired.match(/\[/g)||[]).length;
+          const closeBrackets=(repaired.match(/\]/g)||[]).length;
+          // Trim to last complete value
+          repaired=repaired.replace(/,\s*"[^"]*"\s*:\s*[^,}\]]*$/,'');
+          for(let i=0;i<openBrackets-closeBrackets;i++) repaired+=']';
+          for(let i=0;i<openBraces-closeBraces;i++) repaired+='}';
+          try{report=JSON.parse(repaired);}
+          catch(e3){throw new Error('Could not read the analysis. Please try scanning again with a clearer photo of the ingredients.');}
+        }
+      }else throw new Error('Could not read the analysis. Please try again.');
+    }
+
+    // If the AI spotted a barcode in the image, look it up in databases for verified data
+    if(!dbNutrition && report.barcodeSeen && /^\d{8,14}$/.test(report.barcodeSeen.replace(/\s/g,''))){
+      const bc=report.barcodeSeen.replace(/\s/g,'');
+      for(const db of [
+        {name:'Open Food Facts',url:`https://world.openfoodfacts.org/api/v0/product/${bc}.json`},
+        {name:'Open Beauty Facts',url:`https://world.openbeautyfacts.org/api/v0/product/${bc}.json`},
+        {name:'Open Products Facts',url:`https://world.openproductsfacts.org/api/v0/product/${bc}.json`}
+      ]){
+        try{
+          const r=await fetch(db.url,{signal:AbortSignal.timeout(5000)});
+          const d=await r.json();
+          if(d.status===1&&d.product){
+            const p=d.product,n=p.nutriments||{};
+            dbSource=db.name;
+            dbNutrition={energy:n.energy_100g||n['energy-kcal_100g'],sugar:n.sugars_100g,fat:n.fat_100g,satfat:n['saturated-fat_100g'],sodium:n.sodium_100g!=null?Math.round(n.sodium_100g*1000):null,protein:n.proteins_100g,carbs:n.carbohydrates_100g,fiber:n.fiber_100g};
+            break;
+          }
+        }catch(e){}
+      }
+    }
+
+    await new Promise(r=>setTimeout(r,300));
+    document.getElementById('loading').classList.remove('show');
+
+    // Check if image was too blurry to read
+    if(imgB64 && report.imageReadable===false){
+      btn.disabled=false;
+      const retake=confirm('📷 The photo was too blurry or dark to read the ingredients clearly.\n\nFor accurate results:\n• Tap OK to take a clearer photo (good lighting, hold steady, get close to the text)\n• Or tap Cancel to type the ingredients manually instead');
+      if(retake){
+        clearImg();
+        openCamera();
+      }else{
+        clearImg();
+        document.getElementById('box-mn').style.display='block';
+        document.getElementById('manualVal').focus();
+      }
+      return;
+    }
+
+    saveToHistory(report);
+    render(report,nafdacNo||report.nafdacNo||'',dbNutrition,dbSource);
+    updateDashboard();
+
+  }catch(err){
+    document.getElementById('loading').classList.remove('show');btn.disabled=false;
+    alert('Analysis failed.\n\nError: '+err.message);
+  }
+  btn.disabled=false;
+}
+
+function render(r,nafdacNo,dbNutrition,dbSource){
+  lastReport=r;
+  if(nafdacNo&&!r.nafdacNo) r.nafdacNo=nafdacNo;
+  const profile=getProfile();
+
+  // ── PERSONAL VERDICT BANNER (shows first) ──
+  const pvWrap=document.getElementById('pVerdictWrap');
+  const pv=r.personalVerdict;
+  if(!profile.name){
+    // No profile — prompt to set up
+    pvWrap.innerHTML=`
+      <div class="pv-noprofile">
+        <div class="pv-noprofile-title">🧬 Get Your Personal Verdict</div>
+        <div class="pv-noprofile-text">Set up your health profile (age, allergies, conditions, medications) and SafeScan will tell you if this product is right for <strong>your body</strong>.</div>
+        <button class="pv-setup-btn" onclick="goPage('profile')">Set Up My Profile →</button>
+      </div>`;
+  }else if(pv){
+    const cls=pv.rating==='good'?'pv-good':pv.rating==='caution'?'pv-caution':'pv-avoid';
+    const defIcon=pv.rating==='good'?'✅':pv.rating==='caution'?'⚠️':'🚫';
+    pvWrap.innerHTML=`
+      <div class="pverdict ${cls}">
+        <div class="pv-icon">${pv.icon||defIcon}</div>
+        <div class="pv-verdict">${pv.headline||(pv.rating==='good'?'Good For You':pv.rating==='caution'?'Use With Caution':'Better To Avoid')}</div>
+        <div class="pv-for">For ${profile.name}${profile.age?', '+profile.age+' yrs':''}${profile.conditions?' · '+profile.conditions.split(',')[0].trim():''}</div>
+        <div class="pv-reason">${pv.reason||''}</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.6">
+          ⚕️ AI guide only — not medical advice. Confirm with a pharmacist or doctor before deciding.
+        </div>
+      </div>`;
+  }else pvWrap.innerHTML='';
+
+  document.getElementById('rhProduct').textContent=r.productName||'Product Analysis';
+  document.getElementById('rhCategory').textContent=(r.category||'').toUpperCase()+' PRODUCT';
+  document.getElementById('rhConcerns').textContent=r.concernCount||0;
+
+  const level=r.concernLevel||'low';
+  const lColors={low:'var(--safe)',medium:'var(--warn)',high:'var(--danger)'};
+  const lSegs={low:3,medium:6,high:10};
+  document.getElementById('cmLevelText').style.color=lColors[level];
+  document.getElementById('cmLevelText').textContent=level.toUpperCase();
+  const segsEl=document.getElementById('cmSegs');segsEl.innerHTML='';
+  for(let i=0;i<10;i++){
+    const s=document.createElement('div');
+    s.className='cm-seg '+(i<3?'seg-low':i<6?'seg-med':'seg-high');
+    if(i<lSegs[level])s.classList.add('active');
+    segsEl.appendChild(s);
+  }
+
+  document.getElementById('flagsStrip').innerHTML=(r.flags||[]).map(f=>`<span class="flag-chip fc-${f.type}">${f.label}</span>`).join('');
+
+  // PERSONAL ALERTS
+  const alerts=r.personalAlerts||[];
+  const paEl=document.getElementById('personalAlert');
+  if(alerts.length>0&&profile.name){
+    paEl.style.display='block';
+    document.getElementById('paName').textContent=`Personalised for ${profile.name}`;
+    document.getElementById('paItems').innerHTML=alerts.map(a=>`
+      <div class="pa-item pai-${a.type}">
+        <span style="font-size:16px;flex-shrink:0">${a.icon}</span>
+        <div><strong style="color:var(--text)">${a.title}</strong><br>${a.message}</div>
+      </div>`).join('');
+  }else paEl.style.display='none';
+
+  document.getElementById('aiSum').textContent=r.summary||'';
+  document.getElementById('findingsBox').innerHTML=(r.findings||[]).map(f=>`
+    <div style="display:flex;gap:9px;padding:8px 10px;border-radius:7px;margin-bottom:5px;font-size:11px;line-height:1.5;border:1px solid;${f.type==='alert'?'border-color:rgba(255,71,87,0.2);background:rgba(255,71,87,0.05)':f.type==='warn'?'border-color:rgba(255,165,2,0.2);background:rgba(255,165,2,0.05)':f.type==='safe'?'border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.04)':'border-color:rgba(0,229,255,0.15);background:rgba(0,229,255,0.04)'}">
+      <span style="font-size:14px;flex-shrink:0">${f.icon}</span><span style="color:var(--text2)">${f.text}</span></div>`).join('');
+
+  // Build nutrition — prefer REAL database data when available
+  let nutritionRows=r.nutrition||[];
+  let nutritionSourceNote='';
+  if(dbNutrition){
+    // Use verified database nutrition values
+    const lvl=(val,warn,danger)=>val==null?'safe':val>=danger?'danger':val>=warn?'warn':'safe';
+    const rows=[];
+    if(dbNutrition.energy!=null) rows.push({name:'Energy',value:dbNutrition.energy+' kcal',percent:Math.min(dbNutrition.energy/5,100),level:lvl(dbNutrition.energy,300,500)});
+    if(dbNutrition.sugar!=null) rows.push({name:'Sugar',value:dbNutrition.sugar+'g',percent:Math.min(dbNutrition.sugar*4,100),level:lvl(dbNutrition.sugar,15,25)});
+    if(dbNutrition.fat!=null) rows.push({name:'Fat',value:dbNutrition.fat+'g',percent:Math.min(dbNutrition.fat*3,100),level:lvl(dbNutrition.fat,17,30)});
+    if(dbNutrition.satfat!=null) rows.push({name:'Saturated Fat',value:dbNutrition.satfat+'g',percent:Math.min(dbNutrition.satfat*10,100),level:lvl(dbNutrition.satfat,5,10)});
+    if(dbNutrition.sodium!=null) rows.push({name:'Sodium',value:dbNutrition.sodium+'mg',percent:Math.min(dbNutrition.sodium/15,100),level:lvl(dbNutrition.sodium,600,1200)});
+    if(dbNutrition.protein!=null) rows.push({name:'Protein',value:dbNutrition.protein+'g',percent:Math.min(dbNutrition.protein*4,100),level:'safe'});
+    if(dbNutrition.carbs!=null) rows.push({name:'Carbohydrates',value:dbNutrition.carbs+'g',percent:Math.min(dbNutrition.carbs*1.5,100),level:'safe'});
+    if(dbNutrition.fiber!=null) rows.push({name:'Fibre',value:dbNutrition.fiber+'g',percent:Math.min(dbNutrition.fiber*10,100),level:'safe'});
+    if(rows.length>0){nutritionRows=rows;nutritionSourceNote=`<div style="font-size:10px;color:var(--safe);font-family:var(--fm);margin-bottom:10px;padding:7px 9px;background:rgba(57,255,20,0.05);border:1px solid rgba(57,255,20,0.15);border-radius:6px">✓ Verified nutrition data per 100g from <strong>${dbSource}</strong></div>`;}
+  }
+
+  document.getElementById('nutrBox').innerHTML=nutritionSourceNote+(nutritionRows.length?nutritionRows.map(n=>`
+    <div class="nrow"><span class="nname">${n.name}</span><span class="nval">${n.value}</span>
+      <div class="nbar-w"><div class="nbar nb-${n.level}" style="width:${Math.min(n.percent||0,100)}%"></div></div>
+      <span class="nflag ${n.level==='safe'?'f-ok':n.level==='warn'?'f-mod':'f-high'}">${n.level==='safe'?'OK':n.level==='warn'?'MOD':'HIGH'}</span>
+    </div>${n.who?`<div style="font-size:9px;color:var(--text3);font-family:var(--fm);padding:1px 0 5px;line-height:1.5">WHO: ${n.who}</div>`:''}`).join(''):'<p style="color:var(--text3);font-size:11px">No nutritional data available. Try scanning the nutrition facts table or entering a barcode.</p>');
+
+  document.getElementById('ingrBox').innerHTML=(r.ingredients||[]).map(i=>`<span class="ichip ${i.level}" title="${i.reason||''}">${i.name}</span>`).join('')||'<p style="color:var(--text3);font-size:11px">No ingredient data.</p>';
+
+  const whoFindings=getWHOFindings((document.getElementById('manualVal').value||''));
+  const allWho=whoFindings.map(f=>({name:f.name,guideline:f.note,status:'flagged',note:'WHO Published Data'}));
+  document.getElementById('whoBox').innerHTML=allWho.length?allWho.map(w=>`
+    <div class="wrow">
+      <div class="wdot" style="background:${w.status==='within_limits'?'var(--safe)':w.status==='exceeds_limits'||w.status==='flagged'?'var(--danger)':'var(--warn)'}"></div>
+      <div class="wtext"><strong>${w.name}</strong><br>${w.guideline}${w.note?`<br><span style="color:var(--text3);font-size:9px">📚 ${w.note}</span>`:''}</div>
+    </div>`).join(''):`<p style="color:var(--text3);font-size:11px">No specific WHO guidelines matched for this product's ingredients.</p>`;
+
+  const nReg=nafdacNo||r.nafdacNo||'';
+  document.getElementById('nafdacBox').innerHTML=`
+    <div class="nafdac-panel">
+      <div class="np-header"><span style="font-size:16px">🏛️</span><span class="np-title">How to Verify with NAFDAC</span></div>
+      <div class="np-body">
+        ${nReg?`<div class="np-reg">NAFDAC No. detected: ${nReg}</div>`:'<div style="font-size:11px;color:var(--text2);margin-bottom:10px">No NAFDAC number detected. Scan the part of the label where it is printed (usually near the barcode).</div>'}
+
+        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:12px;padding:9px;background:rgba(255,165,2,0.05);border:1px solid rgba(255,165,2,0.15);border-radius:7px">
+          ⚖️ <strong style="color:var(--warn)">Only NAFDAC can confirm if a product is genuine.</strong> Use the official methods below to verify ${nReg||'the NAFDAC number'} yourself.
+        </div>
+
+        <!-- METHOD 1: SMS (most reliable) -->
+        <div class="np-sms" style="margin-bottom:10px">
+          <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--safe);margin-bottom:8px">📱 Method 1 — SMS Verification (Most Reliable)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.9">
+            <strong style="color:var(--text)">For medicines</strong> with a scratch panel:<br>
+            1. Scratch the panel to reveal a <strong style="color:var(--text)">PIN code</strong><br>
+            2. SMS the PIN to <strong style="color:var(--accent)">38353</strong> — <strong style="color:var(--safe)">FREE on all networks</strong><br>
+            3. Get instant reply: Genuine ✓ or Fake ✗<br>
+            <span style="color:var(--text3);font-size:10px;display:block;margin-top:4px">Works on MTN, Glo, Airtel, 9mobile</span>
+          </div>
+        </div>
+
+        <!-- METHOD 2: Official website -->
+        <div style="background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.2);border-radius:8px;padding:10px;margin-bottom:10px">
+          <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">🌐 Method 2 — Official NAFDAC Portal (NAPAMS)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.8;margin-bottom:8px">
+            1. Tap the official portal below to open it<br>
+            2. On the homepage, scroll to <strong style="color:var(--text)">"Verify Products"</strong><br>
+            3. Enter <strong style="color:var(--accent)">${nReg||'the NAFDAC number'}</strong> and tap Verify<br>
+            4. View the official registration result, manufacturer & expiry
+          </div>
+          <a class="np-link nl-primary" href="https://registration.nafdac.gov.ng/" target="_blank">
+            <span style="font-size:14px">✅</span><div><strong>NAFDAC Official Verify Portal</strong><br><span style="color:var(--text3);font-size:9px">registration.nafdac.gov.ng — Food, drugs, water, veterinary</span></div>
+          </a>
+        </div>
+
+        <!-- METHOD 3: Call / Report -->
+        <div style="background:rgba(255,71,87,0.04);border:1px solid rgba(255,71,87,0.2);border-radius:8px;padding:10px">
+          <div style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--danger);margin-bottom:8px">📞 Method 3 — Call or Report</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.9">
+            Suspect a fake product?<br>
+            • Call NAFDAC: <strong style="color:var(--accent)">0800-162-3322</strong> (Free)<br>
+            • Email: <strong style="color:var(--accent)">sf.alert@nafdac.gov.ng</strong>
+          </div>
+          <a class="np-link nl-danger" href="https://www.nafdac.gov.ng/report-a-product/" target="_blank" style="margin-top:8px">
+            <span style="font-size:14px">🚨</span><div><strong>Report Suspicious Product Online</strong><br><span style="color:var(--text3);font-size:9px">nafdac.gov.ng/report-a-product</span></div>
+          </a>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('suitBox').innerHTML=(r.suitability||[]).map(s=>{
+    const ok=s.suitable===true,caut=s.suitable==='caution';
+    return`<div class="sitem"><div class="semoji">${s.emoji}</div><div class="slabel">${s.group}</div>
+      <div class="stag ${ok?'f-ok':caut?'f-mod':'f-high'}">${ok?'OK':caut?'CAUTION':'AVOID'}</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px;line-height:1.4">${s.reason||''}</div></div>`;
+  }).join('');
+
+  const res=document.getElementById('results');
+  res.style.display='block';
+  setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// INIT
+window.onload=()=>{loadProfileForm();updateDashboard();};
+</script>
+</body>
+</html>
